@@ -1,47 +1,46 @@
-// Define the target function for minimization.
-// Example function for demonstration: f(x) = (x - 3)^2 + 2.
-function targetFunction(x) {
-    return (x - 3) ** 2 + 2; // Computes the value of the function at a given x.
+// Create a function to calculate the objective. For demonstration: f(x) = (x - 3)^2 + 2.
+function calculateObjective(x) {
+    return Math.pow(x - 3, 2) + 2; // Return function's value at x.
 }
 
-// Implement the Golden Section Search to find the minimum of the target function within a given range [a, b].
-function optimizeWithGoldenSection(a, b, epsilon = 1e-5) {
-    // The golden ratio, important for setting the search points.
-    const phi = (1 + Math.sqrt(5)) / 2;
+// Apply the Golden Section Search method to find the function's minimum point within the interval [low, high].
+function findMinimumUsingGoldenRatio(low, high, tolerance = 0.00001) {
+    // Calculate the golden ratio, crucial for the distribution of search points.
+    const goldenRatio = (1 + Math.sqrt(5)) / 2;
 
-    // Initial points c and d are determined by dividing the interval [a, b] according to the golden ratio.
-    let c = b - (b - a) / phi; // c is nearer to a
-    let d = a + (b - a) / phi; // d is nearer to b
+    // Compute initial probing points within the interval based on the golden ratio.
+    let pointA = high - (high - low) / goldenRatio; // Point A is closer to low
+    let pointB = low + (high - low) / goldenRatio; // Point B is closer to high
 
-    // Iterative search continues until the interval is sufficiently small.
-    while (Math.abs(c - d) > epsilon) {
-        // Function evaluations at the points c and d.
-        let fc = targetFunction(c); // Evaluate function at c
-        let fd = targetFunction(d); // Evaluate function at d
+    // Continue refining the interval until the range is smaller than tolerance.
+    while (Math.abs(pointA - pointB) > tolerance) {
+        // Evaluate the objective function at both points.
+        let valueAtPointA = calculateObjective(pointA); // Value at point A
+        let valueAtPointB = calculateObjective(pointB); // Value at point B
 
-        // Update the search interval based on the comparison of function values.
-        if (fc < fd) {
-            b = d; // Narrow the interval to [a, d] if f(c) is less than f(d).
+        // Narrow down the search range based on function evaluations.
+        if (valueAtPointA < valueAtPointB) {
+            high = pointB; // If value at A is lower, focus on left sub-interval.
         } else {
-            a = c; // Narrow the interval to [c, b] if f(d) is less or equal.
+            low = pointA; // If value at B is lower or equal, focus on right sub-interval.
         }
 
-        // Recompute c and d for the new interval.
-        c = b - (b - a) / phi;
-        d = a + (b - a) / phi;
+        // Recalculate the points A and B for the updated range.
+        pointA = high - (high - low) / goldenRatio;
+        pointB = low + (high - low) / goldenRatio;
     }
 
-    // The midpoint of the last interval is considered the best estimate of the minimum.
-    return (b + a) / 2;
+    // Return the center of the final interval as the best approximation of the minimum location.
+    return (high + low) / 2;
 }
 
-// Initialize the interval for the search.
-let start = 0; // Start of the interval
-let end = 6; // End of the interval
+// Set the range for applying the Golden Section Search.
+let initialLow = 0; // Start of the search interval
+let initialHigh = 6; // End of the search interval
 
-// Apply the Golden Section Search to find the minimum.
-let optimalValue = optimizeWithGoldenSection(start, end);
+// Execute the Golden Section Search to identify the optimal minimum value.
+let optimalX = findMinimumUsingGoldenRatio(initialLow, initialHigh);
 
-// Output the results.
-console.log("The optimal x value is:", optimalValue);
-console.log("At this x, the function's minimum value is:", targetFunction(optimalValue));
+// Display the results.
+console.log("Optimal x-value found:", optimalX);
+console.log("Minimum value of the function:", calculateObjective(optimalX));
