@@ -1,1 +1,14 @@
 
+/* Mobile styles */
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+}
+
+/* Desktop styles */
+@media (min-width: 769px) {
+  body {
+    font-size: 18px;
+  }
+}
